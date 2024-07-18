@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Scoreboard</h1>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Punctuation</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for score in scoreboard %}
+        <tr>
+          <td>{{ score.user.username }}</td>
+          <td>{{ score.score }}</td>
+          <td>{{ score.created_at }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

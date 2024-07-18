@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+
+<div class="login-card">
+    <div class="card-header">
+        <div class="log">Login</div>
+    </div>
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong> Por favor corrige los errores abajo.
+        </div>
+        {% endif %}
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">Username:</label>
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">Password:</label>
+            {{ form.password }}
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" value="Login">
+        </div>
+    </form>
+    <p>Si no tienes cuenta haz <a href="{% url 'register' %}">Click Aquí</a></p>
+</div>
+
+{% endblock content %}
