@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout, authenticate, login
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from django.contrib.auth.decorators import login_required
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, CustomUserChangeForm
+from meca.models import User
 
 def home(request):
     text = "This is some sample text for typing practice."
@@ -40,3 +42,19 @@ def login_view(request):
 def logout(request):
     auth_logout(request)
     return redirect('home')
+
+@login_required
+def profile_view(request):
+    return redirect('user-update', pk=request.user.pk)
+
+@login_required
+def user_update_view(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = CustomUserChangeForm(instance=user)
+    return render(request, 'user_update.html', {'form': form})

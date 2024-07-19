@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from meca import views as meca_views
+from api.views import user_update_view
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 urlpatterns = [
@@ -29,4 +30,5 @@ urlpatterns = [
     path('scoreboard/', include('scoreboard.urls')),
     path('register/', meca_views.register, name='register'),
     path('logout/', meca_views.logout, name='logout'),
+    path('profile/<int:pk>/', user_update_view, name='user-update'),
 ]

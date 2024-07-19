@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Update User{% endblock title %}
+
+{% block content %}
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/update.css' %}">
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var message = "{{ message }}";
+            if (message) {
+                alert(message);
+            }
+        });
+    </script>
+    <div class="container mt-5">
+        <h1>Actualizar Usuario</h1>
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="inputGroup">
+                {{ form.username }}
+                {{ form.username.label_tag }}
+            </div>
+
+            <div class="inputGroup">
+                {{ form.email }}
+                {{ form.email.label_tag }}
+            </div>
+            <div class="inputGroup">
+                {{ form.first_name }}
+                {{ form.first_name.label_tag }}
+            </div>
+            <div class="inputGroup">
+                {{ form.last_name }}
+                {{ form.last_name.label_tag }}
+            </div>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+    </div>
+
+{% endblock content %}

@@ -62,11 +62,13 @@
             var velocidad = palabrasCorrectas / tiempoTranscurrido * 60;
 
             $('#resultado').html('<p id="precision">Precisión: ' + precision.toFixed(2) + '</p><p id="velocidad">Velocidad: ' + velocidad.toFixed(0) + ' palabras por minuto</p>');
+
         });
 
         $('#enviarBtn').on('click', function() {
             var velocidad = parseInt(parseFloat($('#velocidad').text().split(' ')[1]));
             var user_id = '{{ request.user.id }}';
+
             $.ajax({
                 type: 'POST',
                 url: "{% url 'save_score' %}",

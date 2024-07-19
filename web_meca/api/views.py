@@ -1,21 +1,20 @@
-from django.shortcuts import render, redirect
-from .serializers import *
-from rest_framework.views import APIView
+from django.shortcuts import render, redirect, get_object_or_404
+from .serializers import ScoreboardSerializer
 from rest_framework.response import Response
 from rest_framework import status, viewsets, permissions, generics
 from meca.models import User
 from .models import Scoreboard
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from meca.forms import CustomUserChangeForm
 
 class ScoreboardViewSet (viewsets.ReadOnlyModelViewSet):
     queryset = Scoreboard.objects.all()
     serializer_class = ScoreboardSerializer
     permission_classes = [permissions.AllowAny]
 
-class UserViewSet (viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
+# @api_view(['POST'])
+# @login_required
 class SaveScoreView(generics.CreateAPIView):
     serializer_class = ScoreboardSerializer
 
@@ -47,10 +46,15 @@ def UserScoreboardView(request, user_id):
 
     return render(request, 'scoreboard/scoreboard.html', context)
 
-class UserUpdateView(generics.UpdateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def get_object(self):
-        return self.request.user
+@login_required
+def user_update_view(request, pk):
+    user = get_object_or_404(User, id=pk)
+    if request.method == 'POST':
+        form = CustomUserChangeForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Usuario actualizado correctamente')
+            return redirect('user-update', pk=user.pk)
+    else:
+        form = CustomUserChangeForm(instance=user)
+    return render(request, 'registration/profile.html', {'form': form, 'user': user})

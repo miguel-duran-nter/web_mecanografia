@@ -17,6 +17,9 @@
               <a href="{% url 'user_scoreboard' request.user.id %}" class="nav-link active">Scoreboard Personal</a>
             </li>
             <li>
+              <a href="{% url 'user-update' pk=request.user.id %}" class="nav-link active">My Profile</a>
+            </li>
+            <li>
               <a href="{% url 'logout' %}" class="nav-link active">Logout</a>
             </li>
           {% else %}
