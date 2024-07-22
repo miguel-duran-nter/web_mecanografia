@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+    <h1>Página de Mecanografía</h1>
+
+    <br>
+
+    {% if request.user.is_authenticated %}
+    <p id="textoEntrada"></p>
+
+    <p id="textoOriginal"></p>
+
+    <input type="text" id="inputTexto" placeholder="Escribe aquí" autofocus>
+
+    <p id="resultado"></p>
+
+    <button class="btn btn-primary" type="submit" id="enviarBtn">Enviar</button>
+    {% else %}
+    <p>Para poder realizar el test debe <a href="{% url 'login' %}">Iniciar Sesion</a>.</p>
+    {% endif %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var textoOriginal = 'Morbi blandit vel sem vel aliquam. Curabitur mauris turpis, mollis non nisl in, fermentum consectetur velit. Ut tincidunt quis dui vitae pretium. Etiam placerat mattis lacus, non laoreet lectus semper a. Vivamus porta luctus aliquam. Cras ultricies erat sed pellentesque rutrum. Aenean velit ex, interdum vel vehicula vel, mattis ut leo.';
+        var palabrasOriginales = textoOriginal.split(' ');
+        var tiempoInicio;
+
+        mostrarTextoOriginal();
+
+        $('#inputTexto').on('input', function() {
+            if (!tiempoInicio) {
+                tiempoInicio = Date.now();
+            }
+
+            var entradaUsuario = $(this).val().trim();
+            var palabrasUsuario = entradaUsuario.split(' ');
+
+            palabrasOriginales.forEach(function(palabra, index) {
+                var span = $('#textoOriginal span').eq(index);
+
+                if (palabrasUsuario[index] === palabra) {
+                    span.removeClass('error');
+                    span.addClass('correcto');
+                } else {
+                    span.removeClass('correcto');
+                    span.addClass('error');
+                }
+            });
+
+            var palabrasCorrectas = palabrasUsuario.filter(function(palabra, index) {
+                return palabra === palabrasOriginales[index];
+            }).length;
+
+            var precision = palabrasCorrectas / palabrasOriginales.length * 100;
+            var tiempoTranscurrido = (Date.now() - tiempoInicio) / 1000;
+            var velocidad = palabrasCorrectas / tiempoTranscurrido * 60;
+
+            $('#resultado').html('<p id="precision">Precisión: ' + precision.toFixed(2) + '</p><p id="velocidad">Velocidad: ' + velocidad.toFixed(0) + ' palabras por minuto</p>');
+
+        });
+
+        $('#enviarBtn').on('click', function() {
+            var velocidad = parseInt(parseFloat($('#velocidad').text().split(' ')[1]));
+            var user_id = '{{ request.user.id }}';
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save_score' %}",
+                data: {
+                    'user_id': user_id,
+                    'score': velocidad,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status == 'success') {
+                        alert('Datos guardados exitosamente');
+                        window.location.href = '{% url "scoreboard" %}';
+                    } else {
+                        window.location.href = '{% url "scoreboard" %}';
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Error en la solicitud: ' + error);
+                }
+            });
+        });
+
+        function mostrarTextoOriginal() {
+            palabrasOriginales.forEach(function(palabra, index) {
+                var span = $('<span>', {text: palabra + ' '});
+                $('#textoOriginal').append(span);
+            });
+        }
+    });
+</script>
+
+
+{% endblock %}
