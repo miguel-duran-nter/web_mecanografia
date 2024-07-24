@@ -9,6 +9,4 @@ from api import views
 urlpatterns = [
     path('', scoreboard_view, name='scoreboard'),
     path('personal/<int:user_id>/', views.UserScoreboardView, name='user_scoreboard'),
-    path('save-score/', views.SaveScoreView.as_view(), name='save_score'),
-    # path('scoreboard/<int:user_id>/', views.UserScoreboardView, name='user_scoreboard'),
 ]

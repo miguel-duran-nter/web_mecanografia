@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock title %}
+
+{% block content %}
+{% load static %}
+
+<div class="login-card">
+
+    <div class="card-header">
+        <h2>Login</h2>
+    </div>
+
+    <form id="loginForm">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+        <br>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <br>
+        <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+
+    <br>
+
+    <p>Si no tienes cuenta haz <a href="{% url 'register' %}">Click Aquí</a></p>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        try {
+            const response = await fetch('/api/v1/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: new URLSearchParams({ 'username': username, 'password': password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('isAuthenticated', 'true');
+                sessionStorage.setItem('logged', 'true');
+                Swal.fire({
+                    icon: 'success',
+                    title: data.detail
+                }).then(() => {
+                    window.location.href = data.redirect_url;
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: data.detail
+                });
+            }
+        } catch (error) {
+
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: error
+            });
+        }
+    });
+</script>
+
+{% endblock content %}

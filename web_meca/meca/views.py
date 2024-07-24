@@ -1,17 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout, authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.middleware.csrf import get_token
+
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, CustomUserChangeForm
-from meca.models import User
+from .models import User
 
 def home(request):
-    text = "This is some sample text for typing practice."
-    palabrasOriginales = text.split(' ')
-
-    context = {
-        'palabrasOriginales': palabrasOriginales
-    }
-    return render(request, 'meca/home.html', context)
+    is_logged = request.session.get('logged', False)
+    return render(request, 'meca/home.html', {'is_logged': is_logged})
 
 def register(request):
     if request.method == 'POST':
@@ -25,21 +22,13 @@ def register(request):
     return render(request, 'registration/register.html', {'form': form})
 
 def login_view(request):
-    if request.method == 'POST':
-        form = CustomAuthenticationForm(request, request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('home')
-    else:
-        form = CustomAuthenticationForm()
-
-    return render(request, 'registration/login.html', {'form': form})
+    csrf_token = get_token(request)
+    response = render(request, 'registration/login1.html')
+    response.set_cookie('csrftoken', csrf_token)
+    return response
 
 def logout(request):
+    request.session['logged'] = False
     auth_logout(request)
     return redirect('home')
 
