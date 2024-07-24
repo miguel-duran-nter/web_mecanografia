@@ -124,7 +124,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    BASE_DIR / "static",
 ]
 
 # Default primary key field type
@@ -140,7 +140,7 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Web Mecanografía API',
-    'DESCRIPTION': 'testeo de teclado',
+    'DESCRIPTION': 'API para visualizar y agregar usuarios, así como gestionar la tabla de puntuaciones.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
