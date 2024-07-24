@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: Web Mecanografía API
   version: 1.0.0
-  description: testeo de teclado
+  description: API para visualizar y agregar usuarios, así como gestionar la tabla de puntuaciones.
 paths:
   /api/v1/Scoreboard/:
     get:

@@ -20,13 +20,13 @@
               <a href="{% url 'user-update' pk=request.user.id %}" class="nav-link active">My Profile</a>
             </li>
             <li>
-              <a href="{% url 'logout' %}" class="nav-link active">Logout</a>
+              <a href="{% url 'logout' %}" (click)="logout()" class="nav-link active">Logout</a>
             </li>
           {% else %}
           <li id="login">
             <a href="{% url 'login' %}" class="nav-link active">Login</a>
           </li>
-        {% endif %}
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -34,16 +34,17 @@
   <script>
 
     function logout() {
-      localStorage.setItem("login",false)
+      sessionStorage.setItem("logged",false)
     }
+    
+    // if (sessionStorage.getItem('logged') === 'true') {
 
-    if (localStorage.getItem('login') === 'true') {
-
-      lista = document.querySelector('.navbar-nav')
-      element = document.getElementById('login')
-      element.remove()
-      lista.innerHTML += '<li><a href="/scoreboard_personal" class="nav-link active">Scoreboard Personal</a></li>'
-      lista.innerHTML += '<li><a href="/logout/" onclick="logout()" class="nav-link active">Logout</a></li>'
+    //   lista = document.querySelector('.navbar-nav')
+    //   element = document.getElementById('login')
+    //   element.remove()
+    //   lista.innerHTML += '<li><a href="/scoreboard_personal" class="nav-link active">Scoreboard Personal</a></li>'
+    //   lista.innerHTML += '<li><a href="/profile" class="nav-link active">My Profile</a></li>'
+    //   lista.innerHTML += '<li><a href="/logout/" onclick="logout()" class="nav-link active">Logout</a></li>'
       
-    }
+    // }
     </script>

@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock title %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+
+<div class="row">
+  <div class="col-md-6 mx-auto">
+    <div class="card">
+      <div class="card-header">
+        <div class="text-header">Register</div>
+      </div>
+      <div class="card-body">
+        <form action="#">
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input required="" class="form-control" name="username" id="username" type="text">
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input required="" class="form-control" name="email" id="email" type="email">
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input required="" class="form-control" name="password" id="password" type="password">
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password:</label>
+            <input required="" class="form-control" name="confirm-password" id="confirm-password" type="password">
+          </div>
+          <input type="submit" class="btn" value="submit">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.getElementById('registerForm').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password1 = document.getElementById('password1').value;
+    const password2 = document.getElementById('password2').value;
+    const keyboard = document.getElementById('keyboard').value;
+
+    if (password1 !== password2) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Passwords do not match'
+      });
+      return;
+    }
+
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+    try {
+      const response = await fetch('/api/v1/register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ 'username': username, 'email': email, 'password1': password1, 'password2': password2, 'keyboard': keyboard })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: data.detail
+        }).then(() => {
+          window.location.href = data.redirect_url;
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: data.detail
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'An error occurred'
+      });
+    }
+  });
+</script>
+
+
+
+{% endblock content %}
